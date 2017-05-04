@@ -41,7 +41,7 @@ function preDBOperation(model){
 // function for triggering and setting up the final response in the router
 function postDBOperation(model){
     model.info=model.status;
-    model.emit(model.callbackRouter)
+    model.emit(model.callbackRouter,model)
 }
 
 // exports
