@@ -1,46 +1,41 @@
 'use strict'
 
-var httpBlockGetter=require('./helper.js').httpBlockGetter;
-var emit=require('./../settings.js').emitter;
-var service=require('./../services/authorizationProcessor/authorization.js');
+//user-defined dependencies
+var creator=require('./helper.js').httpBlockGetter;
+var globalEmitter=require('./../../init.js').globalEmitter;
 
-const callbackEventName='sendBackResponse';
+//Event Names (Constant)
+const callBackEventName='callbackRouter';
+const globalAuthServiceCall='authServiceCall';
 
-
-
-module.exports=function(app){
-    console.log(this);
-    app.post('/create', (req,res)=>{
-        var model=httpBlockGetter(req,res,callbackEventName)
-        model.typeOfRequest="create"
-        model = init(model)
-        model.emit("create-service")
-    });
-    app.post('/read', (req,res)=>{
-        var model=httpBlockGetter(req,res,callbackEventName)
-        model.typeOfRequest="read"
-        model = init(model)
-        model.emit("read-service")
-    });
-    app.post('/update', (req,res)=>{
-        var model=httpBlockGetter(req,res,callbackEventName)
-        model.typeOfRequest="update"
-        model = init(model)
-        model.emit("update-service")
-    });
-    app.post('/delete', (req,res)=>{
-        var model=httpBlockGetter(req,res,callbackEventName)
-        model.typeOfRequest="delete"
-        model = init(model)
-        model.emit("delete-service")
-    });
+//define the routes
+function process(app){
+    app.post('/user/:userOps', setupModelAndForward);
     return app;
+}
+
+//setting up the model and forwarding it to service
+function setupModelAndForward(req,res){
+    //create new model
+    var model=creator(req,res)
+
+    //setup model data
+    model.requestType=req.params.userOps;
+    model.callbackRouter=callBackEventName;
+    
+    //setup callback model event //last call in AuthHandler
+    model.once(callBackEventName, (model)=>{model.res.send(model.info)})
+
+    //setup the rest of the model events at service layer
+    globalEmitter.emit(globalAuthServiceCall,model)
+
+    //triggering the service event of model
+    model.emit("service",model)
     
 }
 
-function init(model){
-        //Instantiating a Service Plan through Factory
-        service(model)
-        model.on(callbackEventName, ()=>{model.res.send(model.status)})
-        return model;
-} 
+//exports
+module.exports=process
+
+
+ 

@@ -1,46 +1,48 @@
 'use strict'
 
+// event names
+const callBackEventName='sendBackService';
+const globalAuthServiceCall='authServiceCall';
+const globalUserDataAccessCall='userDataAccessCall'
 
-var emit=require('./../../settings.js').emitter;
+// global event emitter
+var global;
 
-var dataAccess=require('./../../dataAccess/userDataAccess.js');
+// function to define the main service event operation
+function authorizeService(globalEmitter){
+    globalEmitter.on(globalAuthServiceCall,servicePlan)
+    global=globalEmitter;
+}
 
+// function to define pre and post db operation events
+function servicePlan(model){
+    model.callbackService=callBackEventName;
+    model.once('service', preDBOperation);
+    model.once(callBackEventName,postDBOperation);
+}
 
-//Factory for the service plan
-module.exports=function(model){
-    return new ServicePlan(model)
-};
-    
-    
-//Constructor for service plan
-function ServicePlan(model){
-    console.log(this);
-    switch(model.typeOfRequest){
-        case "create":
-            model.on('create-service', ()=>{
-                dataAccess(model);
-                model.emit("create");
-            });
-            break;
-        case "read":
-            model.on('read-service', ()=>{
-                dataAccess(model);
-                model.emit("read");
-            });
-            break;
-        case "update":
-            model.on('update-service', ()=>{
-                dataAccess(model);
-                model.emit("update");
-            });
-            break;
-        case "delete":
-            model.on('delete-service', ()=>{
-                dataAccess(model);
-                model.emit("delete");
-            });
-            break;
-        default:
-            console.log("Mannn! you are at wrong place");
+//triggering the required db operation based on the request
+function preDBOperation(model){
+    // validating the type of request 
+    if(model.requestType=="create"||model.requestType=="read"||model.requestType=="delete"||model.requestType=="update")
+    {
+            //setting up the data access layer
+            global.emit(globalUserDataAccessCall,model)
+            model.emit(model.requestType,model);
+    }
+    else
+    {
+    // reply for out of scope request
+            model.info="URL Not Valid, Use create/read/delete/update"
+            model.emit(model.callbackRouter,model)
     }
 }
+
+// function for triggering and setting up the final response in the router
+function postDBOperation(model){
+    model.info=model.status;
+    model.emit(model.callbackRouter)
+}
+
+// exports
+module.exports=authorizeService

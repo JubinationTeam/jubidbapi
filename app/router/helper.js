@@ -1,16 +1,20 @@
 'use strict'
-var objects=require('./../models/objects/index.js');
 
+//user-defined dependencies
+var model=require('./../models/objects/index.js');
 
-module.exports={
-    'httpBlockGetter':httpBlockMutator
+//converts model into an http block
+function httpBlockMutator(req, res){
+    var httpBlock=model.plainModel;
+    httpBlock.req=req
+    httpBlock.res=res
+    return httpBlock;
 }
 
+//list of helper functions
+var listOfFunctions={
+    'httpBlockGetter':httpBlockMutator
+};
 
-function httpBlockMutator(req, res, callback){
-        var httpBlock=objects.plainModel;
-        httpBlock.req=req
-        httpBlock.res=res
-        httpBlock.callback=callback
-        return httpBlock;
-    }
+//exports
+module.exports=listOfFunctions;

@@ -1,26 +1,35 @@
 'use strict'
 
-var schema=require('./app/settings.js');
+// node dependencies
 var express = require('express');
-var bodyParser = require('body-parser');
 var app = express();
+var bodyParser = require('body-parser');
 
-var router = express.Router();
-var port = process.env.PORT||80;
+// user-defined dependencies
+var connection=require('./app/dbConnection.js');
+var initFunction=require('./init.js').init;
 
-var authRouter= require('./app/router/authHandler.js')(router);
-var opsRouter= require('./app/router/opsHandler.js')(router);
-
-
-// create application/json parser 
+// json parsing
 var jsonParser = bodyParser.json()
-// create application/x-www-form-urlencoded parser 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
-
 app.use(jsonParser);
 app.use(urlencodedParser);
 
+// router settings
+var router = express.Router();
+var authRouter= require('./app/router/authHandler.js')(router);
+var opsRouter= require('./app/router/opsHandler.js')(router);
 app.use('/auth',authRouter);
 app.use('/ops',opsRouter);
 
-app.listen(port,()=>{schema.connect(); console.log("Server is listening");});
+// port settings
+var port = process.env.PORT||80;
+app.listen(port,init)
+
+// initialiser function
+function init(){
+    //mongodb connection
+    connection.connect();
+    console.log("Server is listening");
+    initFunction();
+};
