@@ -1,8 +1,8 @@
-'use strict'
+  'use strict'
 
 //user-defined dependencies
 var creator=require('./helper.js').httpBlockGetter;
-var globalEmitter=require('./../../init.js').globalEmitter;
+var globalEmitter=require('./../init.js').globalEmitter;
 
 //Event Names (Constant)
 const callBackEventName='callbackRouter';

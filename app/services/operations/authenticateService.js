@@ -2,7 +2,7 @@
 
 // event names
 const callbackEventName="authenticateReadLogic";
-const globalReqServiceCall='reqServiceCall';
+const globalReqServiceCall='ops';
 const globalUserDataAccessCall='userDataAccessCall'
 
 // global event emitter
