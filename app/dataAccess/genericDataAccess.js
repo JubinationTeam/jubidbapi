@@ -1,14 +1,11 @@
 'use strict'
-// user-defined dependencies
-
-var User=require('./../models/schema/index.js').User;
 
 // event name
-const globalUserDataAccessCall='userDataAccessCall'
+const globalCall='dataAccessCall'
 
 // exports
 module.exports=function(globalEmitter){
-    globalEmitter.on(globalUserDataAccessCall,dataAccessPlan)
+    globalEmitter.on(globalCall,dataAccessPlan)
 }
    
 // catches events based on the request and executes the required db operation
@@ -21,7 +18,7 @@ function dataAccessPlan(model)
             model.once("readById", listenerReadById)
 }
 
-// function to create a new user
+// function to create a new 
 function listenerCreate(model){
         var value={
         name: model.req.body.name,
@@ -30,7 +27,7 @@ function listenerCreate(model){
 
     };
 
-    new User(value).save(function(err, doc){
+    new model.schema(value).save(function(err, doc){
         if(err) 
         {
             model.status=err
@@ -47,7 +44,7 @@ function listenerCreate(model){
 
 // function to delete a user by id
 function listenerDelete(model){
-    User.findByIdAndRemove( model.req.body.id,function(err, doc){
+    model.schema.findByIdAndRemove( model.req.body.id,function(err, doc){
         if(err) 
         {
             model.status=err
@@ -71,7 +68,7 @@ function listenerReadByName(model){
 
     };
 
-    User.find(query,function(err, doc){
+    model.schema.find(query,function(err, doc){
         if(err) 
         {
             model.status=err
@@ -89,7 +86,7 @@ function listenerReadByName(model){
 // function to read user data by user's id
 function listenerReadById(model){
 
-    User.findById(model.req.body.id,function(err, doc){
+    model.schema.findById(model.req.body.id,function(err, doc){
         if(err) 
         {
             model.status=err;
@@ -111,7 +108,7 @@ function listenerUpdate(model){
         'name': model.req.body.name 
     }
 
-    User.findByIdAndUpdate(model.req.body.id, { $set: { 'name': model.req.body.name ,'maxEntries':model.req.body.maxEntries,'access':model.req.body.access}},callback)
+    model.schema.findByIdAndUpdate(model.req.body.id, { $set: { 'name': model.req.body.name ,'maxEntries':model.req.body.maxEntries,'access':model.req.body.access}},callback)
 
    function callback(err,doc){
         if(err) 

@@ -15,12 +15,10 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 app.use(jsonParser);
 app.use(urlencodedParser);
 
-// router settings
-var router = express.Router();
+initFunction(); 
+//controller call
+require('./app/controller/handler.js').process(app);
 
-var authRouter= require('./app/init.js').process(router);
-
-app.use('/auth',authRouter);
 
 // port settings
 var port = process.env.PORT||80;
@@ -31,5 +29,5 @@ function init(){
     //mongodb connection
     connection.connect();
     console.log("Server is listening");
-    initFunction(); 
+   
 };

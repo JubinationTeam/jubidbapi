@@ -1,22 +1,23 @@
 'use strict'
+// user-defined dependencies
+var User=require('./../../models/schema/index.js').User;
 
 // event names
 const callBackEventName='sendBackService';
-const globalAuthServiceCall='user';
-const globalUserDataAccessCall='userDataAccessCall'
+const globalDataAccessCall='dataAccessCall'
 
 // global event emitter
 var global;
 
 // function to define the main service event operation
-function authorizeService(globalEmitter){
-    globalEmitter.on(globalAuthServiceCall,servicePlan)
+function ServicePlan(globalEmitter,globalCall){
+    console.log("Service plan for "+globalCall+"created");
+    globalEmitter.on(globalCall,operate)
     global=globalEmitter;
-    
 }
 
 // function to define pre and post db operation events
-function servicePlan(model){
+function operate(model){
     model.callbackService=callBackEventName;
     model.once('service', preDBOperation);
     model.once(callBackEventName,postDBOperation);
@@ -24,16 +25,16 @@ function servicePlan(model){
 
 //triggering the required db operation based on the request
 function preDBOperation(model){
-    
+    var ops=model.params["ops"];
+    model.schema=User;
     // validating the type of request 
-    if(model.secondParam=="create"||model.secondParam=="read"||model.secondParam=="delete"||model.secondParam=="update")
-    {
-        
-            
+    if(ops=="create"||ops=="read"||ops=="delete"||ops=="update")
+    {       
             //setting up the data access layer
-            global.emit(globalUserDataAccessCall,model)
-            model.emit(model.secondParam,model);
+            global.emit(globalDataAccessCall,model)
+            model.emit(ops,model);
     }
+    
     else
     {
     // reply for out of scope request
@@ -49,4 +50,4 @@ function postDBOperation(model){
 }
 
 // exports
-module.exports=authorizeService
+module.exports=ServicePlan

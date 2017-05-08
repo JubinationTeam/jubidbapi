@@ -1,55 +1,40 @@
 'use strict'
 
-
 //services
 var serviceAuthorizeOps=require('./services/profileManager/userProfileService.js');
 var serviceAuthenticate=require('./services/operations/authenticateService.js');
-
-var demo=require('./controller/operationHandler.js').demo;
+var controllerInit=require('./controller/handler.js').init;
 
 //data access
-var userDataAccess=require('./dataAccess/userDataAccess.js');
+var genericDataAccess=require('./dataAccess/genericDataAccess.js');
 
 //global event emitter
 const EventEmitter = require('events');
-class MyEmitter extends EventEmitter {   }
-const myEmitter = new MyEmitter();
+class GlobalEmitter extends EventEmitter {   }
+const globalEmitter = new GlobalEmitter();
 
-//instantiating Service layer and Data Access layer
+//url variables
+const url='/:type/:ops';
+
+//valid url's
+var validRequestEntities=["admin/create/","admin/read/","admin/delete/","admin/update/",
+                         "user/create/","user/read/","user/delete/","user/update/"];
+
+//variables required by controller init function
+var routerInitModel={
+        'globalEmitter':globalEmitter,
+        'url':url,
+        'validRequestEntities':validRequestEntities
+    };
+
+
+//instantiating Handler,Service layer and Data Access layer
 function init(){
-    serviceAuthorizeOps(myEmitter);
-    serviceAuthenticate(myEmitter);
-    userDataAccess(myEmitter);
+    controllerInit(routerInitModel);
+    serviceAuthorizeOps(globalEmitter,'admin');
+    serviceAuthenticate(globalEmitter,'user');
+    genericDataAccess(globalEmitter);
 }
-
-
-//Creating new model
-var model=new MyEmitter ()
-
-//user-defined dependencies
-//var creator=require('./controller/helper.js').httpBlockGetter;
-//var globalEmitter=require('./init.js').globalEmitter;
-//var opHandler=require('./controller/operationHandler.js').globalEmitter;
-//var process= require('./controller/operationHandler.js')
-
-function process(app){
-        app.post('/:user/:ops', setup);
-        return app;
-}
-
-function setup(req,res){
-    model.req=req;
-    model.res=res;
-    model.firstParam=req.params.user;
-    model.secondParam=req.params.ops;
-    model.globalCall=model.firstParam.concat(model.secondParam);
-    model.globalEmitter=myEmitter;
-    demo(myEmitter);
-    myEmitter.emit("callOpHandler",model);
-}
-
-module.exports.process=process;
 
 //exports
-module.exports.globalEmitter=myEmitter;
 module.exports.init=init;

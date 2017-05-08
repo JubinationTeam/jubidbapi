@@ -8,6 +8,7 @@ function httpBlockMutator(req, res){
     var httpBlock=model.plainModel;
     httpBlock.req=req
     httpBlock.res=res
+    httpBlock.params=req.params
     return httpBlock;
 }
 
