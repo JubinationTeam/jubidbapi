@@ -12,7 +12,8 @@ module.exports=function(globalEmitter,global){
    
 // catches events based on the request and executes the required db operation
 function dataAccessPlan(model)
-{            
+{           
+    
             console.log("Sent to DB")
             switch (model.dbOpsType)
                     {
