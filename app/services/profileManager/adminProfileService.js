@@ -32,7 +32,7 @@ function preDBOperation(model){
     
     if(model.schema==null||!model.schema)
     {
-        model.info="Invalid schema"
+        model.info='Invalid schema'
         model.emit(model.callBackRouter,model)
     }
     
@@ -47,7 +47,7 @@ function preDBOperation(model){
     else
     {
     // reply for out of scope request
-            model.info="URL Not Valid, Use create/read/delete/update"
+            model.info='URL Not Valid, Use create/read/delete/update'
             model.emit(model.callBackRouter,model)
     }
 }

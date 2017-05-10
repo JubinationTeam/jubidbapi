@@ -12,6 +12,7 @@ var genericDataAccess=require('./dataAccess/genericDataAccess.js');
 const EventEmitter = require('events');
 class GlobalEmitter extends EventEmitter {   }
 const globalEmitter = new GlobalEmitter();
+globalEmitter.setMaxListeners(10000);
 
 //url variables
 const url='/:type/:ops';

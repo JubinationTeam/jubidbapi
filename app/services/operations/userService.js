@@ -45,14 +45,12 @@ function grantOperator(model){
             if(model.status.access[i]==model.dbOpsType&&model.schema!=null&&model.schema&&model.schema!="User")
             {   
                 granted=true;
-                console.log("Access Granted!!");
                 doOperation(model);
                 break;
             }
     }
     if(!granted)
     {
-        console.log("Sorry Access Not Granted");
         model.info="Access Not Granted!!";
         model.emit(model.callBackRouter,model);
     }

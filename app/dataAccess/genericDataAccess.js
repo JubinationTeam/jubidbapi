@@ -1,5 +1,6 @@
 'use strict'
 
+
 // event name
 var globalCall;
 
@@ -12,8 +13,8 @@ module.exports=function(globalEmitter,global){
 // catches events based on the request and executes the required db operation
 function dataAccessPlan(model)
 {            
+            console.log("Sent to DB")
             switch (model.dbOpsType)
-                    
                     {
                 case "create" :
                             model.once("create", listenerCreate)
@@ -37,8 +38,7 @@ function dataAccessPlan(model)
 
 // function to create a new user
 function listenerCreate(model){
-        var value=model.data;
-
+    var value=model.data;
     new model.schema(value).save(function(err, doc){
         if(err) 
         {
@@ -49,7 +49,6 @@ function listenerCreate(model){
         {
             model.status=doc
             model.emit(model.callbackService,model);
-            console.log('Successfully created!!!');
         }
     });
 }
@@ -66,7 +65,6 @@ function listenerDelete(model){
         {
             model.status=doc
             model.emit(model.callbackService,model);
-            console.log('Successfully deleted!!!');
         }
     });
 }
@@ -75,7 +73,6 @@ function listenerDelete(model){
 function listenerReadByFilter(model){
 
     var query=model.data;
-
     model.schema.find(query,function(err, doc){
         if(err) 
         {
@@ -86,35 +83,29 @@ function listenerReadByFilter(model){
         {
             model.status=doc
             model.emit(model.callbackService,model);
-            console.log('Successfully read!!!');
         }
     });
 }
 
 // function to read user data by user's id
 function listenerReadById(model){
-
     model.schema.findById(model.id,function(err, doc){
         if(err) 
         {
-            model.status=err;
+            model.status=err
             model.emit(model.callbackService,model)
         }
         else
         {   
-            model.status=doc;
+            model.status=doc
             model.emit(model.callbackService,model)
-            console.log('Successfully Read by id!!!');
         }
     });
 }
 
 //function to update user data
 function listenerUpdate(model){
-    
-    model.schema.findByIdAndUpdate(model.id, { $set: model.data},callback)
-
-   function callback(err,doc){
+    model.schema.findByIdAndUpdate(model.id, { $set: model.data},function(err,doc){
         if(err) 
         {
             model.status=err
@@ -124,7 +115,7 @@ function listenerUpdate(model){
         {
             model.status=doc
             model.emit(model.callbackService,model);
-            console.log('Successfully updated!!!');
         }
-    }
+        
+    })
 }
