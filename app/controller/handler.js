@@ -16,6 +16,7 @@ function init(initVar){
     validRequestEntities=initVar.validRequestEntities;
 }
 
+
 //routing function
 function process(app){
         app.post(url, validate);
