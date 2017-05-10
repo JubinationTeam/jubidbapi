@@ -11,7 +11,7 @@ var global;
 
 // function to define the main service event operation
 function ServicePlan(globalEmitter,globalCall,globalDACall){
-    globalEmitter.once(globalCall,operate)
+    globalEmitter.on(globalCall,operate)
     global=globalEmitter;
     globalDataAccessCall=globalDACall;
 }

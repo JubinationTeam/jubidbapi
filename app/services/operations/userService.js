@@ -12,7 +12,7 @@ var global;
 
 // function to define pre and post db operation events
 function ServicePlan(globalEmitter,globalCall,globalDACall){
-    globalEmitter.once(globalCall,authenticate)
+    globalEmitter.on(globalCall,authenticate)
     global=globalEmitter;
     globalDataAccessCall=globalDACall;
 }
