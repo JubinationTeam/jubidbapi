@@ -1,4 +1,4 @@
 git add .
 git commit -m msg
-git heroku push master
+git push heroku master
 heroku logs --tail
