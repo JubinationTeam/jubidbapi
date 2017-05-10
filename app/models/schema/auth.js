@@ -12,4 +12,4 @@ var auth={
 var authSchema = mongoose.Schema(auth);
 
 // exports
-module.exports.auth=mongoose.model('auth', authSchema);
+module.exports=mongoose.model('auth', authSchema);

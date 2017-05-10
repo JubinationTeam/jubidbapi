@@ -15,4 +15,4 @@ var scheduledMails={
 var scheduledMailsSchema = mongoose.Schema(scheduledMails);
 
 // exports
-module.exports.scheduledMails=mongoose.model('scheduledMails', scheduledMailsSchema);
+module.exports=mongoose.model('scheduledMails', scheduledMailsSchema);

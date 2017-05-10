@@ -1,19 +1,19 @@
 'use strict'
 // user-defined dependencies
-var user=require('./user.js').User;
-var primary=require('./primary.js').primary;
-var diet=require('./diet.js').diet;
-var custStatus=require('./custStatus.js').custStatus;
-var healthCheckup=require('./healthCheckup.js').healthCheckup;
-var scheduledMails=require('./scheduledMails.js').scheduledMails;
-var feedback=require('./feedback.js').feedback;
-var tpVendor=require('./tpVendor.js').tpVendor;
-var leadFollowUpStatus=require('./leadFollowUpStatus.js').leadFollowUpStatus;
-var payment=require('./payment.js').payment;
-var futureRecommendations=require('./futureRecommendations.js').futureRecommendations;
-var transaction=require('./transaction.js').transaction;
-var auth=require('./auth.js').auth
-var tpProducts=require('./tpProducts.js').tpProducts;
+var user=require('./user.js');
+var primary=require('./primary.js');
+var diet=require('./diet.js');
+var custStatus=require('./custStatus.js');
+var healthCheckup=require('./healthCheckup.js');
+var scheduledMails=require('./scheduledMails.js');
+var feedback=require('./feedback.js');
+var tpVendor=require('./tpVendor.js');
+var leadFollowUpStatus=require('./leadFollowUpStatus.js');
+var payment=require('./payment.js');
+var futureRecommendations=require('./futureRecommendations.js');
+var transaction=require('./transaction.js');
+var auth=require('./auth.js');
+var tpProducts=require('./tpProducts.js');
 
 //exports
 module.exports={

@@ -4,10 +4,9 @@ mongoose.Promise = require('bluebird');
 
 // creating primary schema
 var primary={
-    primaryId: String,
     name: String,
-    mobile: String,
-    email: String,
+    mobile: { type : String , unique : true, required : true, dropDups: true },
+    email: { type : String , unique : true, required : true, dropDups: true },
     address: String,
     password: String,
     dob: String,
@@ -22,4 +21,4 @@ var primary={
 var primarySchema = mongoose.Schema(primary);
 
 // exports
-module.exports.primary=mongoose.model('primary', primarySchema);
+module.exports=mongoose.model('primary', primarySchema);

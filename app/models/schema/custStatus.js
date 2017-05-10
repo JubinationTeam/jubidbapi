@@ -18,4 +18,4 @@ var custStatus={
 var custStatusSchema = mongoose.Schema(custStatus);
 
 // exports
-module.exports.diet=mongoose.model('custStatus', custStatusSchema);
+module.exports=mongoose.model('custStatus', custStatusSchema);

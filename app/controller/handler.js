@@ -46,22 +46,29 @@ function forwardToService(req,res){
         
         //instantiating the model
         var model=creator(req,res);
-    
-        model.callBackRouter=callBackEventName;
-        
-        //setup callback model event
-        model.once(callBackEventName, (model)=>{model.res.send(model.info)})
-    
-        //setup the rest of the model events at service layer
-        var keys=Object.keys(req.params);
-        for(var j=0;j<keys.length;j++){
-            var value=req.params[keys[j]];
-            global.emit(value,model);
-            break;
+        if(!model.req.body)
+        {
+           model.res.send("Body not present"); 
         }
-    
-        //triggering service
-        model.emit("service",model)
+        else{
+            model.callBackRouter=callBackEventName;
+
+            //setup callback model event
+            model.once(callBackEventName, (model)=>{
+                model.res.send(model.info);
+                model.removeAllListeners();
+            })
+
+            //setup the rest of the model events at service layer
+            var keys=Object.keys(req.params);
+            for(var j=0;j<keys.length;j++){
+                var value=req.params[keys[j]];
+                global.emit(value,model);
+            }
+
+            //triggering service
+            model.emit("service",model)
+        }
     }
 
 //exports

@@ -1,19 +1,19 @@
 'use strict'
 // user-defined dependencies
-var User=require('./../../models/schema/index.js').User;
+var index=require('./../../models/schema/index.js');
 
 // event names
 const callBackEventName='sendBackService';
-const globalDataAccessCall='dataAccessCall'
+var globalDataAccessCall;
 
 // global event emitter
 var global;
 
 // function to define the main service event operation
-function ServicePlan(globalEmitter,globalCall){
-    console.log("Service plan for "+globalCall+"created");
-    globalEmitter.on(globalCall,operate)
+function ServicePlan(globalEmitter,globalCall,globalDACall){
+    globalEmitter.once(globalCall,operate)
     global=globalEmitter;
+    globalDataAccessCall=globalDACall;
 }
 
 // function to define pre and post db operation events
@@ -25,14 +25,23 @@ function operate(model){
 
 //triggering the required db operation based on the request
 function preDBOperation(model){
-    var ops=model.params["ops"];
-    model.schema=User;
+    model.dbOpsType=model.params["ops"];
+    model.schema=index[model.req.body.schema];
+    model.data=model.req.body.data;
+    model.id=model.req.body.id;
+    
+    if(model.schema==null||!model.schema)
+    {
+        model.info="Invalid schema"
+        model.emit(model.callBackRouter,model)
+    }
+    
     // validating the type of request 
-    if(ops=="create"||ops=="read"||ops=="delete"||ops=="update")
+    if(model.dbOpsType=="create"||model.dbOpsType=="read"||model.dbOpsType=="delete"||model.dbOpsType=="update")
     {       
             //setting up the data access layer
             global.emit(globalDataAccessCall,model)
-            model.emit(ops,model);
+            model.emit(model.dbOpsType,model);
     }
     
     else

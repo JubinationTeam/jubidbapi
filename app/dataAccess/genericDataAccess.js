@@ -1,31 +1,43 @@
 'use strict'
 
 // event name
-const globalCall='dataAccessCall'
+var globalCall;
 
 // exports
-module.exports=function(globalEmitter){
+module.exports=function(globalEmitter,global){
+    globalCall=global
     globalEmitter.on(globalCall,dataAccessPlan)
 }
    
 // catches events based on the request and executes the required db operation
 function dataAccessPlan(model)
-{
-            model.once("create", listenerCreate)
-            model.once("delete", listenerDelete)
-            model.once("read", listenerReadByName)
-            model.once("update", listenerUpdate)
-            model.once("readById", listenerReadById)
-}
+{            
+            switch (model.dbOpsType)
+                    
+                    {
+                case "create" :
+                            model.once("create", listenerCreate)
+                            break;
+                case "delete" :
+                            model.once("delete", listenerDelete)
+                            break;
+                case "read" :
+                            model.once("read", listenerReadByFilter)
+                            break;
+                case "update":    
+                            model.once("update", listenerUpdate)
+                            break;
+                case "readById":
+                            model.once("readById", listenerReadById)
+                default:
+                            model.status="Something went wrong";
+                            model.emit(model.callbackService,model);
+            }
+  }
 
-// function to create a new 
+// function to create a new user
 function listenerCreate(model){
-        var value={
-        name: model.req.body.name,
-        access: model.req.body.access,
-        maxEntries: model.req.body.maxEntries
-
-    };
+        var value=model.data;
 
     new model.schema(value).save(function(err, doc){
         if(err) 
@@ -44,7 +56,7 @@ function listenerCreate(model){
 
 // function to delete a user by id
 function listenerDelete(model){
-    model.schema.findByIdAndRemove( model.req.body.id,function(err, doc){
+    model.schema.findByIdAndRemove( model.id,function(err, doc){
         if(err) 
         {
             model.status=err
@@ -59,14 +71,10 @@ function listenerDelete(model){
     });
 }
 
-// function to read user data by user's name
-function listenerReadByName(model){
+// function to read user data by user's data
+function listenerReadByFilter(model){
 
-    var query={
-        //'name': model.req.body.name
-        name:model.req.body.name
-
-    };
+    var query=model.data;
 
     model.schema.find(query,function(err, doc){
         if(err) 
@@ -86,7 +94,7 @@ function listenerReadByName(model){
 // function to read user data by user's id
 function listenerReadById(model){
 
-    model.schema.findById(model.req.body.id,function(err, doc){
+    model.schema.findById(model.id,function(err, doc){
         if(err) 
         {
             model.status=err;
@@ -96,7 +104,7 @@ function listenerReadById(model){
         {   
             model.status=doc;
             model.emit(model.callbackService,model)
-            console.log('Successfully Authenticated!!!');
+            console.log('Successfully Read by id!!!');
         }
     });
 }
@@ -104,11 +112,7 @@ function listenerReadById(model){
 //function to update user data
 function listenerUpdate(model){
     
-    var update={
-        'name': model.req.body.name 
-    }
-
-    model.schema.findByIdAndUpdate(model.req.body.id, { $set: { 'name': model.req.body.name ,'maxEntries':model.req.body.maxEntries,'access':model.req.body.access}},callback)
+    model.schema.findByIdAndUpdate(model.id, { $set: model.data},callback)
 
    function callback(err,doc){
         if(err) 

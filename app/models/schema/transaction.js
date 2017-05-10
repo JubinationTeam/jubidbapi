@@ -4,7 +4,7 @@ mongoose.Promise = require('bluebird');
 
 // creating transaction schema
 var transaction={
-    transId: String,
+    leadId: String,
     campaign: String,
     source: String,
     ip: String,
@@ -14,4 +14,4 @@ var transaction={
 var transactionSchema = mongoose.Schema(transaction);
 
 // exports
-module.exports.transaction=mongoose.model('transaction', transactionSchema);
+module.exports=mongoose.model('Transaction', transactionSchema);

@@ -14,4 +14,4 @@ var futureRecommendations={
 var futureRecommendationsSchema = mongoose.Schema(futureRecommendations);
 
 // exports
-module.exports.futureRecommendations=mongoose.model('futureRecommendations', futureRecommendationsSchema);
+module.exports=mongoose.model('futureRecommendations', futureRecommendationsSchema);

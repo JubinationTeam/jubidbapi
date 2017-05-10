@@ -15,4 +15,4 @@ var tpVendor={
 var tpVendorSchema = mongoose.Schema(tpVendor);
 
 // exports
-module.exports.tpVendor=mongoose.model('tpVendor', tpVendorSchema);
+module.exports=mongoose.model('tpVendor', tpVendorSchema);

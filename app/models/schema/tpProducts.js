@@ -17,4 +17,4 @@ var tpProducts={
 var tpProductsSchema = mongoose.Schema(tpProducts);
 
 // exports
-module.exports.tpProducts=mongoose.model('tpProducts', tpProductsSchema);
+module.exports=mongoose.model('tpProducts', tpProductsSchema);

@@ -14,4 +14,4 @@ var leadStatus={
 var leadStatusSchema = mongoose.Schema(leadStatus);
 
 // exports
-module.exports.leadStatus=mongoose.model('leadStatus', leadStatusSchema);
+module.exports=mongoose.model('leadStatus', leadStatusSchema);

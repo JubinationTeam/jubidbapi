@@ -4,6 +4,7 @@ mongoose.Promise = require('bluebird');
 
 // creating leadFollowUpStatus schema
 var leadFollowUpStatus={
+    leadId: String,
     status: String,
     comment: String,
     lastUpdated: String,
@@ -15,4 +16,4 @@ var leadFollowUpStatus={
 var leadFollowUpStatusSchema = mongoose.Schema(leadFollowUpStatus);
 
 // exports
-module.exports.leadFollowUpStatus=mongoose.model('leadFollowUpStatus', leadFollowUpStatusSchema);
+module.exports=mongoose.model('leadFollowUpStatus', leadFollowUpStatusSchema);

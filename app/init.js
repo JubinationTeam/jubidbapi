@@ -1,8 +1,8 @@
 'use strict'
 
 //services
-var serviceAuthorizeOps=require('./services/profileManager/userProfileService.js');
-var serviceAuthenticate=require('./services/operations/authenticateService.js');
+var serviceAuthorizeOps=require('./services/profileManager/adminProfileService.js');
+var serviceAuthenticate=require('./services/operations/userService.js');
 var controllerInit=require('./controller/handler.js').init;
 
 //data access
@@ -27,13 +27,15 @@ var routerInitModel={
         'validRequestEntities':validRequestEntities
     };
 
+const globalDataAccessCall='dataAccessCall';
+
 
 //instantiating Handler,Service layer and Data Access layer
 function init(){
     controllerInit(routerInitModel);
-    serviceAuthorizeOps(globalEmitter,'admin');
-    serviceAuthenticate(globalEmitter,'user');
-    genericDataAccess(globalEmitter);
+    serviceAuthorizeOps(globalEmitter,'admin',globalDataAccessCall);
+    serviceAuthenticate(globalEmitter,'user',globalDataAccessCall);
+    genericDataAccess(globalEmitter,globalDataAccessCall);
 }
 
 //exports
