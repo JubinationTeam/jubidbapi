@@ -12,7 +12,7 @@ var validRequestEntities;
 var averageTimeTaken=0;
 var noOfRequests;
 
-//functio to accept parameters required by the setup function
+//function to accept parameters required by the setup function
 function init(initVar){
     global=initVar.globalEmitter;
     url=initVar.url;
@@ -55,6 +55,7 @@ function forwardToService(req,res){
             model.callBackRouter=callBackEventName;
 
             //setup callback model event
+            console.log("model callbackRouter once")
             model.once(callBackEventName, (model)=>{
                 model.removeAllListeners();
                 respond(res,{'data':model.info});
@@ -64,10 +65,12 @@ function forwardToService(req,res){
             var keys=Object.keys(req.params);
             for(var j=0;j<keys.length;j++){
                 var value=req.params[keys[j]];
+                console.log("global "+value+" emit")
                 global.emit(value,model);
             }
 
             //triggering service
+            console.log("model service emit")
             model.emit("service",model)
         }
     }

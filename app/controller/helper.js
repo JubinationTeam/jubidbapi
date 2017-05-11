@@ -6,7 +6,7 @@ var model=require('./../models/objects/index.js');
 //converts model into an http block
 function httpBlockMutator(req, res){
     var httpBlock=model.plainModel;
-    httpBlock.setMaxListeners(10000);
+    httpBlock.setMaxListeners(6);
     httpBlock.req=req
     httpBlock.res=res
     httpBlock.params=req.params

@@ -15,10 +15,6 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 app.use(jsonParser);
 app.use(urlencodedParser);
 
-initFunction(); 
-//controller call
-require('./app/controller/handler.js').process(app);
-
 
 // port settings
 var port = process.env.PORT||80;
@@ -29,5 +25,10 @@ function init(){
     //mongodb connection
     connection.connect();
     console.log("Server is listening");
+    initFunction(); 
+    //controller call
+    require('./app/controller/handler.js').process(app);
+
+
    
 };
