@@ -3,7 +3,6 @@
 //user-defined dependencies
 var creator=require('./helper.js').httpBlockGetter;
 
-
 //init variables
 const callBackEventName="callbackRouter"
 var global;
