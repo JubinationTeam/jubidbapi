@@ -1,6 +1,5 @@
 'use strict'
 
-
 // event name
 var globalCall;
 
