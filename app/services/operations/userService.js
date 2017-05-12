@@ -12,33 +12,31 @@ var global;
 
 // function to define pre and post db operation events
 function ServicePlan(globalEmitter,globalCall,globalDACall){
-    console.log("global "+globalCall+" on")
-    globalEmitter.on(globalCall,authenticate)
+    globalEmitter.on(globalCall,setup)
     global=globalEmitter;
     globalDataAccessCall=globalDACall;
 }
 
 // function to authenticate user access
-function authenticate(model)
+function setup(model)
 {
-        console.log("model service once")
-        model.once("service",setupModelAndForwardForUserPermissions);
+    model.once("service",authenticate);
 }
 
 // setup model and forward it to data access to fetch user permissions
-function setupModelAndForwardForUserPermissions(model){
-        model.schema=index["User"];
-        model.dbOpsType="readById";
-        model.callbackService=callbackAuthenticate;
-        model.id=model.req.body.key;
-        console.log("model "+callbackAuthenticate+" once")
-        model.once(callbackAuthenticate,grantOperator);
-        console.log("global "+globalDataAccessCall+" emit")
-        global.emit(globalDataAccessCall,model)
-        console.log("model "+model.dbOpsType+" emit")
-        model.emit(model.dbOpsType,model)
-}
+function authenticate(model){
+    
+    model.schema=index["User"];
+    model.dbOpsType="readById";
+    model.callbackService=callbackAuthenticate;
+    model.id=model.req.body.key;
+    
+    model.once(callbackAuthenticate,grantOperator);
+    
+    global.emit(globalDataAccessCall,model)
+    model.emit(model.dbOpsType,model)
 
+}
 // authentication logic
 function grantOperator(model){
     var granted=false;
@@ -48,10 +46,23 @@ function grantOperator(model){
         {
             model.schema=index[model.req.body.schema];
             //checks if the requested operation is allowed or not    
-            if(model.status.access[i]==model.dbOpsType&&model.schema!=null&&model.schema&&model.schema!="User")
+            if(model.status.access[i]==model.dbOpsType&&model.schema&&model.req.body.schema!="User")
             {   
+                
                 granted=true;
-                doOperation(model);
+                model.data=model.req.body.data;
+                model.id=model.req.body.id;
+                model.callbackService=callbackOperation;
+                if(model.dbOpsType=="read"&&!model.data)
+                {
+                    model.dbOpsType="readById";
+                }
+                
+                model.once(callbackOperation,sendBackValidData);
+                
+                global.emit(globalDataAccessCall,model)
+                model.emit(model.dbOpsType,model);
+
                 break;
             }
         }
@@ -59,31 +70,13 @@ function grantOperator(model){
     if(!granted)
     {
         model.info="Access Not Granted!!";
-        console.log("model "+model.callBackRouter+" emit")
         model.emit(model.callBackRouter,model);
     }
-}
-//Calling the required db operation
-function doOperation(model){
-        model.data=model.req.body.data;
-        model.id=model.req.body.id;
-        model.callbackService=callbackOperation;
-        console.log("model "+callbackOperation+" once")
-        model.once(callbackOperation,sendBackValidData);
-        if(model.dbOpsType=="read"&&!model.data)
-        {
-            model.dbOpsType="readById";
-        }
-        console.log("global "+globalDataAccessCall+" emit")
-        global.emit(globalDataAccessCall,model)
-        console.log("model "+model.dbOpsType+" emit")
-        model.emit(model.dbOpsType,model);
 }
 
 //Calling back the controller
 function sendBackValidData(model){
     model.info=model.status;
-    console.log("model "+model.callBackRouter+" emit")
     model.emit(model.callBackRouter,model)
 }
 

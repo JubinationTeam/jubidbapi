@@ -1,15 +1,16 @@
 'use strict'
 
 //user-defined dependencies
-var creator=require('./helper.js').httpBlockGetter;
+var da=require("../dataAccess/genericDataAccess.js")
+const EventEmitter = require('events');
+
 
 //init variables
 const callBackEventName="callbackRouter"
 var global;
 var url;
 var validRequestEntities;
-var averageTimeTaken=0;
-var noOfRequests;
+var noOfRequests=0;
 
 //function to accept parameters required by the setup function
 function init(initVar){
@@ -21,8 +22,8 @@ function init(initVar){
 
 //routing function
 function process(app){
-        app.post(url, validate);
-        return app;
+    app.post(url, validate);
+    return app;
 }
 
 //function to validate url's
@@ -33,51 +34,49 @@ function validate(req,res){
     for(var j=0;j<keys.length;j++){
         requestUrl+=req.params[keys[j]]+"/";
     }
+    //instantiating the model
+class Model extends EventEmitter {   }
+
+    var model=new Model()
+    model.setMaxListeners(6);
+    model.req=req
+    model.res=res
+    model.params=req.params
+    model.callBackRouter=callBackEventName;
     //checks if the request url is valid or not
-    if(validRequestEntities.includes(requestUrl)){
-            forwardToService(req,res)
+    if(!model.req.body)
+    {
+        model.info="Body not present"
+        respond(model);
+    }
+    else if(validRequestEntities.includes(requestUrl)){
+        //setup callback model event
+        model.once(callBackEventName, respond);
+
+        //setup the rest of the model events at service layer
+        var keys=Object.keys(req.params);
+        for(var j=0;j<keys.length;j++){
+            var value=req.params[keys[j]];
+            global.emit(value,model);
+        }
+
+        //triggering service
+        model.emit("service",model)
     }
     else{
-            respond(res,{'data':"Invalid Request"});
+        model.info="Invalid Request"
+        respond(model);
     }
 }
 
-//function to call the required service
-function forwardToService(req,res){
-        //instantiating the model
-        var model=creator(req,res);
-        if(!model.req.body)
-        {
-                respond(res,{"data":"Body not present"});
-        }
-        else{
-            model.callBackRouter=callBackEventName;
 
-            //setup callback model event
-            console.log("model callbackRouter once")
-            model.once(callBackEventName, (model)=>{
-                model.removeAllListeners();
-                respond(res,{'data':model.info});
-            })
-
-            //setup the rest of the model events at service layer
-            var keys=Object.keys(req.params);
-            for(var j=0;j<keys.length;j++){
-                var value=req.params[keys[j]];
-                console.log("global "+value+" emit")
-                global.emit(value,model);
-            }
-
-            //triggering service
-            console.log("model service emit")
-            model.emit("service",model)
-        }
-    }
-
-function respond(res,data){
-    res.setHeader('Content-Type', 'application/json'); 
-    res.send(JSON.stringify(data, null, 3));
-    res.end();
+function respond(model){
+    model.removeAllListeners();
+    noOfRequests+=1;
+    console.log("served "+noOfRequests+" requests")
+    model.res.setHeader('Content-Type', 'application/json'); 
+    model.res.send(JSON.stringify({'data':model.info}, null, 3));
+    model.res.end();
 }
 
 //exports
