@@ -28,7 +28,5 @@ function init(){
     initFunction(); 
     //controller call
     require('./app/controller/handler.js').process(app);
-
-
-   
+ 
 };

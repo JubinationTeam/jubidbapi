@@ -1,7 +1,7 @@
 'use strict'
 
 //user-defined dependencies
-var da=require("../dataAccess/genericDataAccess.js")
+var jubiForLoop = require('./../jubiForLoop/jubiForLoop.js');
 const EventEmitter = require('events');
 
 
@@ -22,18 +22,14 @@ function init(initVar){
 
 //routing function
 function process(app){
-    app.post(url, validate);
+    app.post(url, instantiate);
     return app;
 }
 
+
 //function to validate url's
-function validate(req,res){
-    var validity=false;
-    var requestUrl="";
-    var keys=Object.keys(req.params);
-    for(var j=0;j<keys.length;j++){
-        requestUrl+=req.params[keys[j]]+"/";
-    }
+function instantiate(req,res){
+    
     //instantiating the model
     class Model extends EventEmitter {   }
     var model=new Model()
@@ -42,32 +38,33 @@ function validate(req,res){
     model.res=res
     model.params=req.params
     model.callBackRouter=callBackEventName;
+    model.requestUrl="";
+    var keys=Object.keys(model.params);
+    new jubiForLoop(model,keys,(data,key)=>{data.requestUrl+=data.params[key]+"/"},validate)
+   
+}
+
+
+function validate(model){
     //checks if the request url is valid or not
     if(!model.req.body)
     {
         model.info="Body not present"
         respond(model);
     }
-    else if(validRequestEntities.includes(requestUrl)){
+    else if(validRequestEntities.includes(model.requestUrl)){
         //setup callback model event
         model.once(callBackEventName, respond);
 
         //setup the rest of the model events at service layer
-        var keys=Object.keys(req.params);
-        for(var j=0;j<keys.length;j++){
-            var value=req.params[keys[j]];
-            global.emit(value,model);
-        }
-
-        //triggering service
-        model.emit("service",model)
+        var keys=Object.keys(model.req.params);
+        new jubiForLoop(model,keys,(data,key)=>{global.emit(data.params[key],data)},(data)=>{data.emit("service",data)})
     }
     else{
         model.info="Invalid Request"
         respond(model);
     }
 }
-
 
 function respond(model){
     model.removeAllListeners();

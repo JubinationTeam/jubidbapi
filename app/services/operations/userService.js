@@ -1,6 +1,7 @@
 'use strict'
 // user-defined dependencies
 var index=require('./../../models/schema/index.js');
+var jubiForLoop = require('./../../jubiForLoop/jubiForLoop.js');
 
 // event names
 const callbackAuthenticate="callbackAuthenticate";
@@ -39,20 +40,31 @@ function authenticate(model){
 }
 // authentication logic
 function grantOperator(model){
-    var granted=false;
+    model.granted=false;
     model.dbOpsType=model.params["ops"];
     if(model.status&&model.status.access){
         model.readLimit=model.status.maxEntries;
-        for(var i=0;i<model.status.access[model.dbOpsType].length;i++)
-        {
-            model.schema=index[model.req.body.schema];
+        //
+        
+        new jubiForLoop(model,model.status.access[model.dbOpsType],userOps,postGrant)
+        
+    }
+    
+}
+
+//Calling back the controller
+function sendBackValidData(model){
+    model.info=model.status;
+    model.emit(model.callBackRouter,model)
+}
+
+function userOps(model,key){
+model.schema=index[model.req.body.schema];
             //checks if the requested operation is allowed or not    
             
-            if(model.status.access[model.dbOpsType][i]==model.req.body.schema&&model.schema&&model.req.body.schema!="User")
+            if(key==model.req.body.schema&&model.schema&&model.req.body.schema!="User")
             {   
-               
-                
-                granted=true;
+                model.granted=true;
                 model.data=model.req.body.data;
                 model.id=model.req.body.id;
                 model.callbackService=callbackOperation;
@@ -79,21 +91,15 @@ function grantOperator(model){
                 global.emit(globalDataAccessCall,model)
                 model.emit(model.dbOpsType,model);
 
-                break;
-            }
-        }
-    }
-    if(!granted)
+            }    
+}
+
+function postGrant(model){
+    if(!model.granted)
     {
         model.info="Access Not Granted!!";
         model.emit(model.callBackRouter,model);
     }
-}
-
-//Calling back the controller
-function sendBackValidData(model){
-    model.info=model.status;
-    model.emit(model.callBackRouter,model)
 }
 
 //exports 
