@@ -11,5 +11,7 @@ var auth={
     };
 var authSchema = mongoose.Schema(auth);
 
+
+
 // exports
 module.exports=mongoose.model('auth', authSchema);

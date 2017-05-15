@@ -35,8 +35,7 @@ function validate(req,res){
         requestUrl+=req.params[keys[j]]+"/";
     }
     //instantiating the model
-class Model extends EventEmitter {   }
-
+    class Model extends EventEmitter {   }
     var model=new Model()
     model.setMaxListeners(6);
     model.req=req

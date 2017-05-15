@@ -30,7 +30,7 @@ function authenticate(model){
     model.dbOpsType="readById";
     model.callbackService=callbackAuthenticate;
     model.id=model.req.body.key;
-    
+    model.limit=1;
     model.once(callbackAuthenticate,grantOperator);
     
     global.emit(globalDataAccessCall,model)
@@ -41,25 +41,41 @@ function authenticate(model){
 function grantOperator(model){
     var granted=false;
     model.dbOpsType=model.params["ops"];
-    if(model.status.access){
-        for(var i=0;i<=model.status.access.length;i++)
+    if(model.status&&model.status.access){
+        model.readLimit=model.status.maxEntries;
+        for(var i=0;i<model.status.access[model.dbOpsType].length;i++)
         {
             model.schema=index[model.req.body.schema];
             //checks if the requested operation is allowed or not    
-            if(model.status.access[i]==model.dbOpsType&&model.schema&&model.req.body.schema!="User")
+            
+            if(model.status.access[model.dbOpsType][i]==model.req.body.schema&&model.schema&&model.req.body.schema!="User")
             {   
+               
                 
                 granted=true;
                 model.data=model.req.body.data;
                 model.id=model.req.body.id;
                 model.callbackService=callbackOperation;
-                if(model.dbOpsType=="read"&&!model.data)
+                if(model.dbOpsType=="read")
                 {
-                    model.dbOpsType="readById";
+                    if(model.data){
+                        model.pageNo=model.req.body.pageNo;
+                        //code for pagination
+                        if(model.pageNo){
+                            if(model.pageNo==1){
+                                model.pageNo=0
+                            }
+                            else{
+                                model.pageNo=(model.pageNo-1)*model.status.maxEntries;
+                            }
+                        }
+                    }
+                    else{
+                        model.dbOpsType="readById";
+                    }
                 }
                 
                 model.once(callbackOperation,sendBackValidData);
-                
                 global.emit(globalDataAccessCall,model)
                 model.emit(model.dbOpsType,model);
 

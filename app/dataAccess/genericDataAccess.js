@@ -56,7 +56,7 @@ function listenerDelete(model){
 
 // function to read user data by user's data
 function listenerReadByFilter(model){
-     model.schema.find(model.data,(err,doc)=>{postDb(this,err,doc)});
+     model.schema.find(model.data,(err,doc)=>{postDb(this,err,doc)}).limit(model.readLimit).skip(model.pageNo);
 }
 
 // function to read user data by user's id

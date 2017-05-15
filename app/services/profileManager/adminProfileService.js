@@ -29,7 +29,7 @@ function preDBOperation(model){
     model.schema=index[model.req.body.schema];
     model.data=model.req.body.data;
     model.id=model.req.body.id;
-    
+    model.readLimit=100;
     if(model.schema==null||!model.schema)
     {
         model.info='Invalid schema'
