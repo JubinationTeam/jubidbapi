@@ -21,14 +21,21 @@ const url='/:type/:ops';
 var validRequestEntities=["admin/create/","admin/read/","admin/delete/","admin/update/",
                          "user/create/","user/read/","user/delete/","user/update/"];
 
+const globalDataAccessCall='dataAccessCall';
+
 //variables required by controller init function
 var routerInitModel={
         'globalEmitter':globalEmitter,
         'url':url,
-        'validRequestEntities':validRequestEntities
+        'validRequestEntities':validRequestEntities,
+        'callbackName':'callbackRouter'
     };
 
-const globalDataAccessCall='dataAccessCall';
+var dataAccessInitModel={
+        'globalEmitter':globalEmitter,
+        'callName':globalDataAccessCall
+    };
+
 
 
 //instantiating Handler,Service layer and Data Access layer
@@ -36,7 +43,7 @@ function init(){
     controllerInit(routerInitModel);
     serviceAuthorizeOps(globalEmitter,'admin',globalDataAccessCall);
     serviceAuthenticate(globalEmitter,'user',globalDataAccessCall);
-    genericDataAccess(globalEmitter,globalDataAccessCall);
+    genericDataAccess(dataAccessInitModel);
 }
 
 //exports

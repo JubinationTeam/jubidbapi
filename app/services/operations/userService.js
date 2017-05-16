@@ -1,7 +1,11 @@
 'use strict'
+
+//node dependencies
+var jubiForLoop = require('jubi-for-loop');
+
 // user-defined dependencies
 var index=require('./../../models/schema/index.js');
-var jubiForLoop = require('./../../jubiForLoop/jubiForLoop.js');
+var firstGuard=require('./../firstGuard.js');
 
 // event names
 const callbackAuthenticate="callbackAuthenticate";
@@ -11,8 +15,8 @@ var globalDataAccessCall;
 // global event emitter
 var global;
 
-// function to define pre and post db operation events
-function ServicePlan(globalEmitter,globalCall,globalDACall){
+// function to instantiate
+function init(globalEmitter,globalCall,globalDACall){
     globalEmitter.on(globalCall,setup)
     global=globalEmitter;
     globalDataAccessCall=globalDACall;
@@ -21,86 +25,92 @@ function ServicePlan(globalEmitter,globalCall,globalDACall){
 // function to authenticate user access
 function setup(model)
 {
-    model.once("service",authenticate);
+    model.once("service",prepareToValidate);
 }
 
-// setup model and forward it to data access to fetch user permissions
-function authenticate(model){
-    
-    model.schema=index["User"];
-    model.dbOpsType="readById";
-    model.callbackService=callbackAuthenticate;
+// setup model and forward it to firstGuard function to validate the request body
+function prepareToValidate(model){
+    model.schema=model.req.body.schema;
+    model.dbOpsType=model.params["ops"];
+    model.pageNo=model.req.body.pageNo;
+    model.data=model.req.body.data;
     model.id=model.req.body.key;
-    model.limit=1;
-    model.once(callbackAuthenticate,grantOperator);
-    
-    global.emit(globalDataAccessCall,model)
-    model.emit(model.dbOpsType,model)
-
+    authenticate(firstGuard(model))
 }
+
+//function the authenticate the user 
+function authenticate(model){
+    model.callbackService=callbackAuthenticate;
+    model.schema=index["User"];
+    if(model.req.body.key&&model.tag){
+        model.id=model.req.body.key;
+        model.dbOpsType="readById";
+        model.once(callbackAuthenticate,grantOperator);
+        global.emit(globalDataAccessCall,model)
+        model.emit(model.dbOpsType,model)
+    }
+    else{
+        if(!model.req.body.key){
+            model.info+="Key required as well";
+        }
+        respond(model);
+    }
+}
+
+
 // authentication logic
 function grantOperator(model){
-    model.granted=false;
-    model.dbOpsType=model.params["ops"];
     if(model.status&&model.status.access){
+        model.granted=false;
+        model.dbOpsType=model.params["ops"];
         model.readLimit=model.status.maxEntries;
-        //
-        
-        new jubiForLoop(model,model.status.access[model.dbOpsType],userOps,postGrant)
-        
+        model.id=model.req.body.id;
+        model.schema=index[model.req.body.schema];
+        new jubiForLoop(model,model.status.access[model.dbOpsType],userOps,postGrantSendInvalidatedData)
     }
-    
+    else{
+        model.info=model.status;
+        respond(model);
+    }
 }
 
-//Calling back the controller
-function sendBackValidData(model){
-    model.info=model.status;
-    model.emit(model.callBackRouter,model)
-}
 
+//function to interact with the database
 function userOps(model,key){
-model.schema=index[model.req.body.schema];
-            //checks if the requested operation is allowed or not    
-            
+     if(!model.granted){
             if(key==model.req.body.schema&&model.schema&&model.req.body.schema!="User")
             {   
-                model.granted=true;
-                model.data=model.req.body.data;
-                model.id=model.req.body.id;
-                model.callbackService=callbackOperation;
-                if(model.dbOpsType=="read")
-                {
-                    if(model.data){
-                        model.pageNo=model.req.body.pageNo;
-                        //code for pagination
-                        if(model.pageNo){
-                            if(model.pageNo==1){
-                                model.pageNo=0
-                            }
-                            else{
-                                model.pageNo=(model.pageNo-1)*model.status.maxEntries;
-                            }
-                        }
-                    }
-                    else{
-                        model.dbOpsType="readById";
-                    }
+                if(model.pageNo){
+                    model.offset=(model.pageNo-1)*model.status.maxEntries;
                 }
-                
+                model.callbackService=callbackOperation;
                 model.once(callbackOperation,sendBackValidData);
                 global.emit(globalDataAccessCall,model)
                 model.emit(model.dbOpsType,model);
-
+                model.granted=true;
             }    
+     }
+
 }
 
-function postGrant(model){
+//Setup for calling back the controller when request is valid
+function sendBackValidData(model){
+    model.info=model.status;
+    respond(model);
+}
+//function to setup for calling controller when the data in request body is not valid
+function postGrantSendInvalidatedData(model){
     if(!model.granted)
     {
         model.info="Access Not Granted!!";
-        model.emit(model.callBackRouter,model);
+        respond(model);
     }
 }
 
+//Calling back the controller
+function respond(model){
+        model.emit(model.callBackRouter,model);
+}
+
 //exports 
-module.exports=ServicePlan;
+module.exports=init;

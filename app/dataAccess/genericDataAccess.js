@@ -1,20 +1,13 @@
 'use strict'
 
-
-
-// exports
-module.exports=function(globalEmitter,global){
-    globalEmitter.on(global,dataAccessPlan)
+// function to instantiate
+function init(initVar){
+    initVar.globalEmitter.on(initVar.callName,dataAccessPlan)
 }
-
-var array=[];
-
 
 // catches events based on the request and executes the required db operation
 function dataAccessPlan(model)
 {           
-    
-  //  console.log("setting database ops "+model.dbOpsType)
             switch (model.dbOpsType)
                     {
                 case "create" :
@@ -39,13 +32,9 @@ function dataAccessPlan(model)
             }
   }
 
-
-
-
 // function to create a new user
 function listenerCreate(model){ 
     array.push(model);
-    //console.log("entered create "+" "+model.dbOpsType)
     new model.schema(model.data).save((err,doc)=>{postDb(this,err,doc)});
 }
 
@@ -56,7 +45,7 @@ function listenerDelete(model){
 
 // function to read user data by user's data
 function listenerReadByFilter(model){
-     model.schema.find(model.data,(err,doc)=>{postDb(this,err,doc)}).limit(model.readLimit).skip(model.pageNo);
+     model.schema.find(model.data,(err,doc)=>{postDb(this,err,doc)}).limit(model.readLimit).skip(model.offset);
 }
 
 // function to read user data by user's id
@@ -69,8 +58,8 @@ function listenerUpdate(model){
     model.schema.findByIdAndUpdate(model.id, { $set: model.data},(err,doc)=>{postDb(this,err,doc)})
 }
 
+//function to run after DB operation
 function postDb(model,err,doc){
-       // console.log("emitting "+" "+model.dbOpsType)
         if(err){
             console.log(err)
             model.status=err
@@ -82,10 +71,5 @@ function postDb(model,err,doc){
 }
 
 
-module.exports.printArrays=printArrays
-
-    function printArrays(data){
-    array.forEach(function(obj){
-            console.log(obj.uniqueId+"::"+data)
-        });
-}
+// exports
+module.exports=init;

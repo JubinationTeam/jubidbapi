@@ -1,6 +1,7 @@
 'use strict'
 // user-defined dependencies
 var index=require('./../../models/schema/index.js');
+var firstGuard=require('./../firstGuard.js');
 
 // event names
 const callBackEventName='callbackService';
@@ -10,7 +11,7 @@ var globalDataAccessCall;
 var global;
 
 // function to define the main service event operation
-function ServicePlan(globalEmitter,globalCall,globalDACall){
+function init(globalEmitter,globalCall,globalDACall){
     globalEmitter.on(globalCall,operate)
     global=globalEmitter;
     globalDataAccessCall=globalDACall;
@@ -29,26 +30,18 @@ function preDBOperation(model){
     model.schema=index[model.req.body.schema];
     model.data=model.req.body.data;
     model.id=model.req.body.id;
+    model.pageNo=model.req.body.pageNo
+    model=firstGuard(model);
     model.readLimit=100;
-    if(model.schema==null||!model.schema)
-    {
-        model.info='Invalid schema'
+    if(model.tag){
+        if(model.dbOpsType=="create"||model.dbOpsType=="read"||model.dbOpsType=="delete"||model.dbOpsType=="update"){       
+            global.emit(globalDataAccessCall,model)
+            model.emit(model.dbOpsType,model)
+        }
+    }
+    else{
         model.emit(model.callBackRouter,model)
     }
-    // validating the type of request 
-    else if(model.dbOpsType=="create"||model.dbOpsType=="read"||model.dbOpsType=="delete"||model.dbOpsType=="update")
-    {       
-        //setting up the data access layer
-        global.emit(globalDataAccessCall,model)
-        model.emit(model.dbOpsType,model)
-    }
-    else
-    {
-        //  reply for out of scope request
-        model.info='URL Not Valid, Use create/read/delete/update'
-        model.emit(model.callBackRouter,model)
-    }
-    
 }
 
 // function for triggering and setting up the final response in the router
@@ -58,4 +51,4 @@ function postDBOperation(model){
 }
 
 // exports
-module.exports=ServicePlan
+module.exports=init

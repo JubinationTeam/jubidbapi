@@ -1,12 +1,13 @@
 'use strict'
 
+//node dependencies
+var jubiForLoop = require('jubi-for-loop');
+
 //user-defined dependencies
-var jubiForLoop = require('./../jubiForLoop/jubiForLoop.js');
 const EventEmitter = require('events');
 
-
 //init variables
-const callBackEventName="callbackRouter"
+var callBackEventName;
 var global;
 var url;
 var validRequestEntities;
@@ -17,6 +18,7 @@ function init(initVar){
     global=initVar.globalEmitter;
     url=initVar.url;
     validRequestEntities=initVar.validRequestEntities;
+    callBackEventName=initVar.callbackName;
 }
 
 
@@ -27,10 +29,8 @@ function process(app){
 }
 
 
-//function to validate url's
+//function to instantiate the model
 function instantiate(req,res){
-    
-    //instantiating the model
     class Model extends EventEmitter {   }
     var model=new Model()
     model.setMaxListeners(6);
@@ -44,21 +44,22 @@ function instantiate(req,res){
    
 }
 
-
+//function to validate
 function validate(model){
-    //checks if the request url is valid or not
     if(!model.req.body)
     {
         model.info="Body not present"
         respond(model);
     }
     else if(validRequestEntities.includes(model.requestUrl)){
-        //setup callback model event
         model.once(callBackEventName, respond);
-
-        //setup the rest of the model events at service layer
         var keys=Object.keys(model.req.params);
-        new jubiForLoop(model,keys,(data,key)=>{global.emit(data.params[key],data)},(data)=>{data.emit("service",data)})
+        new jubiForLoop(model,keys,(data,key)=>{
+            if(!data.controllerFlag){
+                global.emit(data.params[key],data);
+                data.controllerFlag=true;
+            }
+    },(data)=>{data.emit("service",data)})
     }
     else{
         model.info="Invalid Request"
@@ -66,9 +67,14 @@ function validate(model){
     }
 }
 
+//function to respond back
 function respond(model){
     model.removeAllListeners();
-    noOfRequests+=1;
+    if(noOfRequests==Number.MAX_SAFE_INTEGER){
+        noOfRequests=0;
+    }else{
+        noOfRequests+=1;
+    }
     console.log("served "+noOfRequests+" requests")
     model.res.setHeader('Content-Type', 'application/json'); 
     model.res.send(JSON.stringify({'data':model.info}, null, 3));
