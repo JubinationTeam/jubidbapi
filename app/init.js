@@ -1,12 +1,15 @@
 'use strict'
 
+//data access
+var genericDataAccess=require('jubi-mongoose-data-access');
+
+//controller
+var controllerInit=require('jubi-express-controller').init;
+
 //services
 var serviceAuthorizeOps=require('./services/profileManager/adminProfileService.js');
 var serviceAuthenticate=require('./services/operations/userService.js');
-var controllerInit=require('./controller/handler.js').init;
 
-//data access
-var genericDataAccess=require('./dataAccess/genericDataAccess.js');
 
 //global event emitter
 const EventEmitter = require('events');
@@ -15,18 +18,23 @@ const globalEmitter = new GlobalEmitter();
 globalEmitter.setMaxListeners(3);
 
 //url variables
-const url='/:type/:ops';
+const postUrlDef='/:type/:ops';
+const getUrlDef='/';
 
 //valid url's
-var validRequestEntities=["admin/create/","admin/read/","admin/delete/","admin/update/",
-                         "user/create/","user/read/","user/delete/","user/update/"];
+var validRequestEntities={
+                            "post":["admin/create/","admin/read/","admin/delete/","admin/update/",
+                         "user/create/","user/read/","user/delete/","user/update/"],
+                            "get":[]
+                         };
 
 const globalDataAccessCall='dataAccessCall';
 
 //variables required by controller init function
 var routerInitModel={
         'globalEmitter':globalEmitter,
-        'url':url,
+        'postUrlDef':postUrlDef,
+        'getUrlDef':getUrlDef,
         'validRequestEntities':validRequestEntities,
         'callbackName':'callbackRouter'
     };

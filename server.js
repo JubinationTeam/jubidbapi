@@ -27,6 +27,6 @@ function init(){
     console.log("Server is listening");
     initFunction(); 
     //controller call
-    require('./app/controller/handler.js').process(app);
+    require('jubi-express-controller').process(app);
  
 };

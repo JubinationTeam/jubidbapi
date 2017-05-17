@@ -5,6 +5,7 @@ mongoose.Promise = require('bluebird');
 // creating leadStatus schema
 var leadStatus={
     primaryId: String,
+    leadId: { type : String , unique : true, required : true, dropDups: true },
     wrongEmail: String,
     package: String,
     step2: String,
