@@ -66,7 +66,7 @@ function grantOperator(model){
         model.readLimit=model.status.maxEntries;
         model.id=model.req.body.id;
         model.schema=index[model.req.body.schema];
-        new jubiForLoop(model,model.status.access[model.dbOpsType],userOps,postGrantSendInvalidatedData)
+        jubiForLoop(model,model.status.access[model.dbOpsType],userOps,postGrantSendInvalidatedData)
     }
     else{
         model.info=model.status;

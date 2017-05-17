@@ -14,7 +14,7 @@
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
     "json-validator": "0.0.34",
-    "jubi-for-loop": "^1.0.0",
+    "jubi-for-loop": "^1.0.1",
     "mongoose": "^4.9.6",
     "mongoose-paginate": "^5.0.3",
     "node-stopwatch": "0.0.1",

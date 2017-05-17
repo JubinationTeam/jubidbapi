@@ -40,7 +40,7 @@ function instantiate(req,res){
     model.callBackRouter=callBackEventName;
     model.requestUrl="";
     var keys=Object.keys(model.params);
-    new jubiForLoop(model,keys,(data,key)=>{data.requestUrl+=data.params[key]+"/"},validate)
+    jubiForLoop(model,keys,(data,key)=>{data.requestUrl+=data.params[key]+"/"},validate)
    
 }
 
@@ -54,7 +54,7 @@ function validate(model){
     else if(validRequestEntities.includes(model.requestUrl)){
         model.once(callBackEventName, respond);
         var keys=Object.keys(model.req.params);
-        new jubiForLoop(model,keys,(data,key)=>{
+        jubiForLoop(model,keys,(data,key)=>{
             if(!data.controllerFlag){
                 global.emit(data.params[key],data);
                 data.controllerFlag=true;

@@ -34,7 +34,6 @@ function dataAccessPlan(model)
 
 // function to create a new user
 function listenerCreate(model){ 
-    array.push(model);
     new model.schema(model.data).save((err,doc)=>{postDb(this,err,doc)});
 }
 
