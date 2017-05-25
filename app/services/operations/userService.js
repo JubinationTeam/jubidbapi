@@ -25,7 +25,7 @@ function init(globalEmitter,globalCall,globalDACall){
 // function to authenticate user access
 function setup(model)
 {
-    model.once("service",prepareToValidate);
+    model.once('service',prepareToValidate);
 }
 
 // setup model and forward it to firstGuard function to validate the request body
@@ -40,7 +40,7 @@ function prepareToValidate(model){
 
 //function the authenticate the user 
 function authenticate(model){
-    model.callbackService=callbackAuthenticate;
+    model.callBackFromDataAccess=callbackAuthenticate;
     model.schema=index["User"];
     if(model.req.body.key&&model.tag){
         model.id=model.req.body.key;
@@ -83,7 +83,7 @@ function userOps(model,key){
                 if(model.pageNo){
                     model.offset=(model.pageNo-1)*model.status.maxEntries;
                 }
-                model.callbackService=callbackOperation;
+                model.callBackFromDataAccess=callbackOperation;
                 model.once(callbackOperation,sendBackValidData);
                 global.emit(globalDataAccessCall,model)
                 model.emit(model.dbOpsType,model);

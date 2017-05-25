@@ -14,6 +14,7 @@ var futureRecommendations=require('./futureRecommendations.js');
 var transaction=require('./transaction.js');
 var auth=require('./auth.js');
 var tpProducts=require('./tpProducts.js');
+var lead=require('./lead.js');
 
 //exports
 module.exports={
@@ -30,7 +31,8 @@ module.exports={
     'FutureRecommendations':futureRecommendations,
     'Transaction':transaction,
     'Auth':auth,
-    'TpProducts' :tpProducts
+    'TpProducts' :tpProducts,
+    'Lead' :lead
     
 };
 

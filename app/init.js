@@ -36,12 +36,14 @@ var routerInitModel={
         'postUrlDef':postUrlDef,
         'getUrlDef':getUrlDef,
         'validRequestEntities':validRequestEntities,
-        'callbackName':'callbackRouter'
+        'callbackName':'callbackRouter',
+        'nextCall':'service'
     };
-
+//variables required by data access init function
 var dataAccessInitModel={
         'globalEmitter':globalEmitter,
-        'callName':globalDataAccessCall
+        'nextCall':'dataAccessCall'
+        
     };
 
 

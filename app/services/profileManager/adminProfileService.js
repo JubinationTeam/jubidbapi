@@ -4,7 +4,7 @@ var index=require('./../../models/schema/index.js');
 var firstGuard=require('./../firstGuard.js');
 
 // event names
-const callBackEventName='callbackService';
+const callBackEventName='callBackAdmin';
 var globalDataAccessCall;
 
 // global event emitter
@@ -19,7 +19,7 @@ function init(globalEmitter,globalCall,globalDACall){
 
 // function to define pre and post db operation events
 function operate(model){
-    model.callbackService=callBackEventName;
+    model.callBackFromDataAccess=callBackEventName;
     model.once('service', preDBOperation);
     model.once(callBackEventName,postDBOperation);
 }

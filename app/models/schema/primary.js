@@ -16,7 +16,6 @@ var primary={
     pincode: String,
     stage: String,
     tags: [mongoose.Schema.Types.Mixed]
-    
     };
 var primarySchema = mongoose.Schema(primary);
 

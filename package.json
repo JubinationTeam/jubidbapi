@@ -15,7 +15,7 @@
     "express": "^4.15.2",
     "json-validator": "0.0.34",
     "jubi-express-controller": "^1.0.0",
-    "jubi-for-loop": "^1.0.1",
+    "jubi-for-loop": "^1.0.9",
     "jubi-mongoose-data-access": "^1.0.0",
     "mongoose": "^4.9.6",
     "mongoose-paginate": "^5.0.3",
