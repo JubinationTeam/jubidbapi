@@ -28,6 +28,7 @@ var validRequestEntities={
                             "get":[]
                          };
 
+
 const globalDataAccessCall='dataAccessCall';
 
 //variables required by controller init function
