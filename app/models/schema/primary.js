@@ -18,6 +18,6 @@ var primary={
     tags: [mongoose.Schema.Types.Mixed]
     };
 var primarySchema = mongoose.Schema(primary);
-
+ 
 // exports
 module.exports=mongoose.model('primary', primarySchema);
