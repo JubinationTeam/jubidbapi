@@ -2,43 +2,18 @@
 var mongoose=require('mongoose');
 mongoose.Promise = require('bluebird');
 
-// creating positiveTests schema
-var positiveTests={
-    positiveTests: String,
-    values: String,
-    referenceMin: String,
-    referenceMax: String,
-    tags: [mongoose.Schema.Types.Mixed]
-    };
-var positiveTestsSchema = mongoose.Schema(positiveTests);
-
-// exports
-var positiveTestsVar=mongoose.model('PositiveTests', positiveTestsSchema);
-
-
-// creating positiveProfile schema
-var positiveProfiles={
-    profileName: String,
-    testDetails: [positiveTestsVar.schema],
-    tags: [mongoose.Schema.Types.Mixed]
-};
-var positiveProfilesSchema = mongoose.Schema(positiveProfiles);
-
-// exports
-var positiveProfilesVar=mongoose.model('PositiveProfiles', positiveProfilesSchema);
-
 // creating healthCheckup schema
 var healthCheckup={
-    primaryId: String,
-    healthCheckupId: String,
+    mobile: String,
+    healthCheckupId: { type : String , unique : true, required : true, dropDups: true },
     reportViewed: String,
     reportDownloaded: String,
     vendorId: String,
     reportUrl: String,
-    positiveProfiles: [positiveProfilesVar.schema],
+    report: [mongoose.Schema.Types.Mixed],
     tags: [mongoose.Schema.Types.Mixed]
-    
     };
+
 var healthCheckupSchema = mongoose.Schema(healthCheckup);
 
 // exports

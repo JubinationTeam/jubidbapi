@@ -46,8 +46,6 @@ var dataAccessInitModel={
         
     };
 
-
-
 //instantiating Handler,Service layer and Data Access layer
 function init(){
     controllerInit(routerInitModel);
