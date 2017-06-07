@@ -79,8 +79,9 @@ function grantOperator(model){
 
 //function to interact with the database
 function userOps(model,key){
-    console.log(model.params["ops"]+"OOOOPPPPSSSSTYPE"+model.dbOpsType+model.schema+"          ")
+    console.log(model.params["ops"]+"OOOOPPPPSSSSTYPE"+model.dbOpsType+"/////"+model.schema+"/////")
      if(!model.granted){
+    console.log(model.params["ops"]+"OOOOPPPPSSSSTYPE"+model.dbOpsType+"/////"+model.schema+">>>>>>")
             if(key==model.schema&&model.schema&&model.schema!="User")
             {   
                 if(model.pageNo){
