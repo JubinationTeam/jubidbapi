@@ -30,6 +30,8 @@ function setup(model)
 
 // setup model and forward it to firstGuard function to validate the request body
 function prepareToValidate(model){
+    
+    console.log(model.params["ops"]+"OOOOPPPPSSSSTYPE")
     model.schema=model.req.body.schema;
     model.dbOpsType=model.params["ops"];
     model.pageNo=model.req.body.pageNo;
