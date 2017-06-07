@@ -85,7 +85,7 @@ function grantOperator(model){
 
 //function to interact with the database
 function userOps(model,key){
-    console.log(key+"KEEEEEEEEEEYYYYYY")+
+    console.log(key+"KEEEEEEEEEEYYYYYY")
      if(!model.granted){
             if(key==model.req.body.schema&&model.req.body.schema&&model.req.body.schema!="User")
             {   
