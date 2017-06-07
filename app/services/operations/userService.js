@@ -60,6 +60,9 @@ function authenticate(model){
 
 // authentication logic
 function grantOperator(model){
+    
+    console.log(model.params["ops"]+"OOOOPPPPSSSSTYPE")
+    
     if(model.status&&model.status.access){
         model.granted=false;
         model.dbOpsType=model.params["ops"];
