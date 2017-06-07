@@ -68,13 +68,13 @@ function grantOperator(model){
         model.readLimit=model.status.maxEntries;
         model.id=model.req.body.id;
         model.schema=index[model.req.body.schema];
-        if(model.status.access[model.dbOpsType].includes(model.req.body.schema)){
-            jubiForLoop(model,model.status.access[model.dbOpsType],userOps,postGrantSendInvalidatedData)
-        }
-        else{
-            postGrantSendInvalidatedData(model);
-        }
-    }
+//        if(model.status.access[model.dbOpsType].includes(model.req.body.schema)){
+//            return jubiForLoop(model,model.status.access[model.dbOpsType],userOps,postGrantSendInvalidatedData)
+//        }
+//        else{
+//            return postGrantSendInvalidatedData(model);
+//        }
+//    }
     else{
         model.info=model.status;
         respond(model);
