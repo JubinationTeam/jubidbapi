@@ -79,14 +79,14 @@ function grantOperator(model){
 
 //function to interact with the database
 function userOps(model,key){
+    console.log(model.params["ops"]+"OOOOPPPPSSSSTYPE"+model.dbOpsType+model.schema+"          ")
      if(!model.granted){
-            if(key==model.req.body.schema&&model.schema&&model.req.body.schema!="User")
+            if(key==model.schema&&model.schema&&model.schema!="User")
             {   
                 if(model.pageNo){
                     model.offset=(model.pageNo-1)*model.status.maxEntries;
                 }
                 
-                console.log(model.params["ops"]+"OOOOPPPPSSSSTYPE"+model.dbOpsType)
     
                 model.callBackFromDataAccess=callbackOperation;
                 model.once(callbackOperation,sendBackValidData);
