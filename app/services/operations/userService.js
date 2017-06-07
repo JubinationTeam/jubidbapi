@@ -31,7 +31,6 @@ function setup(model)
 // setup model and forward it to firstGuard function to validate the request body
 function prepareToValidate(model){
     
-    console.log(model.params["ops"]+"OOOOPPPPSSSSTYPE")
     model.schema=model.req.body.schema;
     model.dbOpsType=model.params["ops"];
     model.pageNo=model.req.body.pageNo;
@@ -63,8 +62,6 @@ function authenticate(model){
 // authentication logic
 function grantOperator(model){
     
-    console.log(model.params["ops"]+"OOOOPPPPSSSSTYPE")
-    
     if(model.status&&model.status.access){
         model.granted=false;
         model.dbOpsType=model.params["ops"];
@@ -88,6 +85,9 @@ function userOps(model,key){
                 if(model.pageNo){
                     model.offset=(model.pageNo-1)*model.status.maxEntries;
                 }
+                
+                console.log(model.params["ops"]+"OOOOPPPPSSSSTYPE"+model.dbOpsType)
+    
                 model.callBackFromDataAccess=callbackOperation;
                 model.once(callbackOperation,sendBackValidData);
                 global.emit(globalDataAccessCall,model)
