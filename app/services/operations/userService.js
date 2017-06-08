@@ -89,6 +89,7 @@ function userOps(model,key){
             if(key==model.req.body.schema&&model.req.body.schema&&model.req.body.schema!="User")
             {   
                 model.schema=index[model.req.body.schema];
+                console.log(model.req.body.schema+"::::::::::::::::::")
                 if(model.req.body.schema=="read"&&model.id){
                     model.dbOpsType="readById";
                     console.log("IM IN READ BY ID")
