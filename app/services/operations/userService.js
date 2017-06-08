@@ -67,6 +67,7 @@ function grantOperator(model){
         model.dbOpsType=model.params["ops"];
         model.readLimit=model.status.maxEntries;
         model.id=model.req.body.id;
+        model.schema=index[model.req.body.schema];
         
         if(model.status.access[model.dbOpsType].includes(model.req.body.schema)){
             jubiForLoop(model,model.status.access[model.dbOpsType],userOps,postGrantSendInvalidatedData)
@@ -88,11 +89,8 @@ function userOps(model,key){
      if(!model.granted){
             if(key==model.req.body.schema&&model.req.body.schema&&model.req.body.schema!="User")
             {   
-                model.schema=index[model.req.body.schema];
-                console.log(model.req.body.schema+"::::::::::::::::::")
-                if(model.req.body.schema=="read"&&model.id){
+                if(model.dbOpsType=="read"&&model.id){
                     model.dbOpsType="readById";
-                    console.log("IM IN READ BY ID")
                 }
                 else if(model.pageNo){
                     model.offset=(model.pageNo-1)*model.status.maxEntries;
