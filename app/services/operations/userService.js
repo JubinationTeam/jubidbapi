@@ -91,6 +91,7 @@ function userOps(model,key){
                 model.schema=index[model.req.body.schema];
                 if(model.req.body.schema=="read"&&model.id){
                     model.dbOpsType="readById";
+                    console.log("IM IN READ BY ID")
                 }
                 else if(model.pageNo){
                     model.offset=(model.pageNo-1)*model.status.maxEntries;
