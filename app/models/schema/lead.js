@@ -18,6 +18,7 @@ var lead={
     tpVendor:String,
     amount: String,
     modeOfPayment: String,
+    ipAddress: String,
     tags: [mongoose.Schema.Types.Mixed]
     };
 
