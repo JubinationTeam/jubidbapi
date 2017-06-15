@@ -16,7 +16,6 @@ var lead={
     pincode: String,
     product: String,
     tpVendor:String,
-    numberOfPeople: String,
     amount: String,
     modeOfPayment: String,
     tags: [mongoose.Schema.Types.Mixed]
